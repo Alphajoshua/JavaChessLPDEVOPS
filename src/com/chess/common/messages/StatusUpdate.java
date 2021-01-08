@@ -1,4 +1,4 @@
-package com.chess.common;
+package com.chess.common.messages;
 
 public class StatusUpdate extends SendableMessage {
 

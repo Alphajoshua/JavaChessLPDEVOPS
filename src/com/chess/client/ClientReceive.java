@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import com.chess.common.SendableMessage;
+import com.chess.common.messages.SendableMessage;
 
 public class ClientReceive implements Runnable {
 
