@@ -1,26 +1,21 @@
 package com.chess.common;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import com.chess.server.Database;
 
-public class Account {
+@SuppressWarnings("serial")
+public class Account implements Serializable {
 
+	private static final HashMap<Long, Account> LOADED_ACCOUNT = new HashMap<>();
+	
 	private final long id;
 	private String name;
-	
-	/**
-	 * Load account from database
-	 * 
-	 * @param id the account id
-	 */
-	public Account(long id) {
-		this.id = id;
-		
-	}
 	
 	/**
 	 * New account just created from database
@@ -33,14 +28,29 @@ public class Account {
 		this.name = name;
 	}
 	
+	/**
+	 * Get the account ID
+	 * 
+	 * @return the account id
+	 */
 	public long getId() {
 		return id;
 	}
 	
+	/**
+	 * Get the user name
+	 * 
+	 * @return the name of user
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Set a new name of the user
+	 * 
+	 * @param name the new name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -58,6 +68,52 @@ public class Account {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Get a user account by it's ID
+	 * 
+	 * @param id the user ID
+	 * @return an account or null if cannot found account
+	 */
+	public static Account getAccount(long id) {
+		return LOADED_ACCOUNT.computeIfAbsent(id, (idd) -> {
+			try {
+				Connection co = Database.getConnection();
+				PreparedStatement select = co.prepareStatement("SELECT * FROM accounts WHERE id = ?");
+				select.setLong(1, id);
+				ResultSet rs = select.executeQuery();
+				if(rs.next()) {
+					return new Account(id, rs.getString("name"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return null;
+		});
+	}
+	
+	/**
+	 * Get or create a user account by it's name
+	 * 
+	 * @param name the user name
+	 * @return an account or null if cannot create account
+	 */
+	public static Account getAccount(String name) {
+		try {
+			Connection co = Database.getConnection();
+			PreparedStatement select = co.prepareStatement("SELECT * FROM accounts WHERE name = ?");
+			select.setString(1, name);
+			ResultSet rs = select.executeQuery();
+			if(rs.next()) {
+				return getAccount(rs.getLong("id"));
+			} else {
+				return createNewAccount(name);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static Account createNewAccount(String name) {

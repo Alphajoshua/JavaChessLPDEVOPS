@@ -34,8 +34,14 @@ public class Database {
 		
 		Statement state = connection.createStatement();
 		state.executeUpdate("CREATE TABLE IF NOT EXISTS accounts (" + 
-				"    id INT(11) PRIMARY KEY AUTO_INCREMENT," + 
-				"    name VARCHAR(16));");
+				"id INT(11) PRIMARY KEY AUTO_INCREMENT," + 
+				"name VARCHAR(16));");
+		state.executeUpdate("CREATE TABLE IF NOT EXISTS old_games ("
+				+ " id INT(11) PRIMARY KEY AUTO_INCREMENT,"
+				+ " user_black INT(11),"
+				+ " user_white INT(11),"
+				+ " winner INT(11),"
+				+ ");");
 		
 	}
 	
