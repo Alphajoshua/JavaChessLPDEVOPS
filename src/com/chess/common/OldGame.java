@@ -1,62 +1,33 @@
 package com.chess.common;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import com.chess.server.Database;
 
 @SuppressWarnings("serial")
 public class OldGame implements Serializable {
 
 	private final long id;
-	private final long blackUserId, whiteUserId, winnerId;
+	private final Account blackUser, whiteUser, winner;
 	
-	public OldGame(long id) throws SQLException {
+	public OldGame(long id, Account blackUser, Account whiteUser, Account winner) {
 		this.id = id;
-		
-		Connection co = Database.getConnection();
-		PreparedStatement ps = co.prepareStatement("SELECT * FROM old_games WHERE id = ?");
-		ps.setLong(1, id);
-		ResultSet rs = ps.executeQuery();
-		if(rs.next()) {
-			this.blackUserId = rs.getLong("user_black");
-			this.whiteUserId = rs.getLong("user_white");
-			this.winnerId = rs.getLong("winner");
-		} else {
-			this.blackUserId = 0;
-			this.whiteUserId = 0;
-			this.winnerId = 0;
-		}
+		this.blackUser = blackUser;
+		this.whiteUser = whiteUser;
+		this.winner = winner;
 	}
 	
 	public long getId() {
 		return id;
 	}
 	
-	public long getBlackUserId() {
-		return blackUserId;
-	}
-	
 	public Account getBlackUser() {
-		return Account.getAccount(blackUserId);
-	}
-	
-	public long getWhiteUserId() {
-		return whiteUserId;
+		return blackUser;
 	}
 	
 	public Account getWhiteUser() {
-		return Account.getAccount(whiteUserId);
-	}
-	
-	public long getWinnerId() {
-		return winnerId;
+		return whiteUser;
 	}
 	
 	public Account getWinner() {
-		return Account.getAccount(winnerId);
+		return winner;
 	}
 }
