@@ -5,6 +5,8 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Account implements Serializable {
 	
+	public static final Account SERVER_ACCOUNT = new Account(-1, "Server");
+	
 	private final long id;
 	private String name;
 	
