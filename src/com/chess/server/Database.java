@@ -33,7 +33,7 @@ public class Database {
 		System.out.println("Driver OK, connection successfull");
 		
 		Statement state = connection.createStatement();
-		state.executeQuery("CREATE TABLE IF NOT EXISTS accounts (" + 
+		state.executeUpdate("CREATE TABLE IF NOT EXISTS accounts (" + 
 				"    id INT(11) PRIMARY KEY AUTO_INCREMENT," + 
 				"    name VARCHAR(16));");
 		
