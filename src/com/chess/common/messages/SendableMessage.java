@@ -1,4 +1,4 @@
-package com.chess.common;
+package com.chess.common.messages;
 
 import java.io.Serializable;
 

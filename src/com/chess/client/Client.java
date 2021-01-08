@@ -4,9 +4,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
-import com.chess.common.SendableMessage;
-import com.chess.common.StatusUpdate;
-import com.chess.common.StatusUpdate.StatusType;
+import com.chess.common.messages.SendableMessage;
+import com.chess.common.messages.StatusUpdate;
+import com.chess.common.messages.StatusUpdate.StatusType;
 
 import javafx.application.Platform;
 

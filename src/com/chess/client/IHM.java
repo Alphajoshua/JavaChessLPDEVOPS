@@ -1,6 +1,6 @@
 package com.chess.client;
 
-import com.chess.common.Message;
+import com.chess.common.messages.Message;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
