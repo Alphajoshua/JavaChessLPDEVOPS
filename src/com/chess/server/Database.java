@@ -3,6 +3,7 @@ package com.chess.server;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Database {
 	
@@ -30,6 +31,12 @@ public class Database {
 		password = conf.getValue("password", "password");
 		connection = DriverManager.getConnection(url, user, password);
 		System.out.println("Driver OK, connection successfull");
+		
+		Statement state = connection.createStatement();
+		state.executeQuery("CREATE TABLE IF NOT EXISTS accounts (" + 
+				"    id INT(11) PRIMARY KEY AUTO_INCREMENT," + 
+				"    name VARCHAR(16));");
+		
 	}
 	
 	private static boolean isValidConnection() throws SQLException {
