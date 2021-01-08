@@ -7,6 +7,7 @@ public class Message extends SendableMessage {
 	private int id;
 	private String name;
 	private String message;
+	private MessageList memory = new MessageList();
 	
 	/**
 	 * Create a new message without give sender
@@ -67,6 +68,17 @@ public class Message extends SendableMessage {
 	
 	@Override
 	public String toShow() {
-		return name + " > " + message;
+		String result = "";
+		if(memory.getLastSender() == name)
+		{
+			for(int i =0; i< name.length()+2;++i)
+			{
+				result +=" ";
+			}
+			result+= message;
+		}
+		else
+			result = name + ":: " + message;
+		return result;
 	}
 }
