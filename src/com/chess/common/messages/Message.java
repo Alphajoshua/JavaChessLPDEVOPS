@@ -7,8 +7,6 @@ public class Message extends SendableMessage {
 	private int id;
 	private String name;
 	private String message;
-	private MessageList memory = new MessageList();
-	
 	/**
 	 * Create a new message without give sender
 	 * 
@@ -69,7 +67,7 @@ public class Message extends SendableMessage {
 	@Override
 	public String toShow() {
 		String result = "";
-		if(memory.getLastSender() == name)
+		/*if(TODO.getLastSender() == name)
 		{
 			for(int i =0; i< name.length()+2;++i)
 			{
@@ -77,7 +75,7 @@ public class Message extends SendableMessage {
 			}
 			result+= message;
 		}
-		else
+		else*/
 			result = name + ":: " + message;
 		return result;
 	}
