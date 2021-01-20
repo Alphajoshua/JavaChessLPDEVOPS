@@ -1,5 +1,9 @@
-package com.chess.client;
+package com.chess.client.chat;
 
+import static com.chess.client.MainClient.client;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -8,6 +12,7 @@ import javafx.scene.text.TextFlow;
 
 public class ChatPanel extends Parent{
 
+	ChatControler chatCTRL;
 	int padding = 5;
 	//Text input to send
 	TextArea textToSend;
@@ -23,8 +28,20 @@ public class ChatPanel extends Parent{
 	float width;
 	float height;
 	
+	public ChatControler getChatCTRL()
+	{
+		return this.chatCTRL;
+	}
+
+	public TextFlow getReceivedText()
+	{
+		return this.receivedText;
+	}
+	
 	public ChatPanel (float widthAvailable, float heightAvailable)
 	{
+		chatCTRL = new ChatControler();
+		
 		width=widthAvailable;
 		height=heightAvailable;
 		//Init each elements
@@ -71,7 +88,7 @@ public class ChatPanel extends Parent{
 		
 		receivedText.setPrefWidth(scrollReceivedText.getPrefWidth());
 		receivedText.setVisible(true);
-
+		
 		scrollReceivedText.setContent(receivedText);
 		scrollReceivedText.vvalueProperty().bind(receivedText.heightProperty());
 		
@@ -79,6 +96,7 @@ public class ChatPanel extends Parent{
 		textToSend.setLayoutY(scrollReceivedText.getLayoutY()+scrollReceivedText.getPrefHeight()+padding);
 		textToSend.setPrefWidth((width-(2*padding))/5*4);
 		textToSend.setPrefHeight(height-textToSend.getLayoutY()-padding);
+		textToSend.setWrapText(true);
 		
 		sendBtn.setLayoutX(textToSend.getPrefWidth()+(2*padding));
 		sendBtn.setLayoutY(textToSend.getLayoutY());
@@ -86,6 +104,14 @@ public class ChatPanel extends Parent{
 		sendBtn.setPrefHeight( (textToSend.getPrefHeight()-padding)/2 );
 		sendBtn.setVisible(true);
 		sendBtn.setText("Send");
+		sendBtn.setOnAction(new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						chatCTRL.sendAndDisplayMessage(textToSend,receivedText,client);
+					}
+				});
 		
 		
 		clearBtn.setLayoutX(textToSend.getPrefWidth()+(2*padding) );
@@ -94,5 +120,13 @@ public class ChatPanel extends Parent{
 		clearBtn.setPrefHeight((textToSend.getPrefHeight()-padding)/2);
 		clearBtn.setVisible(true);
 		clearBtn.setText("Clear");
+		clearBtn.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent event)
+			{
+				chatCTRL.clearMessage(textToSend);
+			}
+		});
 	}
 }

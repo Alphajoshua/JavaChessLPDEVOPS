@@ -5,6 +5,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
+import com.chess.client.chat.ChatPanel;
+import com.chess.common.messages.Message;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
@@ -18,6 +20,7 @@ public class Client {
 	private Socket socket;
 	private ObjectOutputStream out;
 	private HashMap<Integer, String> onlineUsers = new HashMap<>();
+	private ChatPanel view;
 	
 	/**
 	 * Create a new client and his socket
@@ -37,6 +40,11 @@ public class Client {
 		}
 
 		new Thread(new ClientReceive(this, socket)).start();
+	}
+	
+	public void setView(ChatPanel view)
+	{
+		this.view = view;
 	}
 	
 	/**
@@ -89,6 +97,19 @@ public class Client {
 	public HashMap<Integer, String> getOnlineUsers() {
 		return onlineUsers;
 	}
+	
+	public void sendMessage(Message mess)
+	{
+		try 
+		{
+		
+		getOut().writeObject(mess);
+		getOut().flush();
+		
+		} catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
 
 	/**
 	 * Manage the message which have been received
@@ -96,18 +117,37 @@ public class Client {
 	 * @param mess the message which have been received
 	 */
 	public void messageReceived(SendableMessage mess) {
-		if(mess instanceof StatusUpdate) {
+		
+		Message rawResult = new Message();
+		
+		if(mess instanceof StatusUpdate) 
+		{
 			StatusUpdate state = (StatusUpdate) mess;
-			if(state.getType().equals(StatusType.LOGIN)) {
+			if(state.getType().equals(StatusType.LOGIN)) 
+			{
 				onlineUsers.put(state.getId(), state.getName());
-			} else {
+			} 
+			
+			else 
+			{
 				onlineUsers.remove(state.getId());
 			}
-		} else {
+			rawResult.setName(state.getName());
+			rawResult.setMessage(state.toShow());
+		}
+		
+		if(mess instanceof Message)
+		{
+			rawResult = (Message)mess;
+		}
+		
+		else 
+		{
 			onlineUsers.put(mess.getId(), mess.getName());
 		}
+		final Message result = new Message(rawResult);
 		try {
-			Platform.runLater(() -> IHM.update(mess.toShow()));
+			Platform.runLater(() -> view.getChatCTRL().printMessage(view.getReceivedText(),result));
 		} catch (Exception e) {
 			
 		}

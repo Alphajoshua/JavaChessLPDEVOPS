@@ -7,6 +7,28 @@ public class Message extends SendableMessage {
 	private int id;
 	private String name;
 	private String message;
+	
+	/**
+	 * Create a new empty message
+	 * 
+	 */
+	public Message()
+	{
+		id=0;
+		name="";
+		message="";
+	}
+	/**
+	 * Create a new message by copy
+	 * 
+	 */
+	public Message(Message raw)
+	{
+		id=raw.getId();
+		name=raw.getName();
+		message=raw.getMessage();
+	}
+	
 	/**
 	 * Create a new message without give sender
 	 * 
@@ -48,6 +70,15 @@ public class Message extends SendableMessage {
 	 */
 	public String getMessage() {
 		return message;
+	}
+	
+	/**
+	 * Set a new text in message
+	 * 
+	 * @param message the new text of message
+	 */
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	/**

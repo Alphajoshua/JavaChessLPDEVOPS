@@ -1,15 +1,21 @@
 package com.chess.client;
 
+import com.chess.client.chat.ChatIHM;
+
 public class MainClient {
 
+	//STATIC CLIENT
+	public static Client client;
+	
 	public static void main(String[] args) {
-		if (args.length != 2) {
+		if (args.length != 2) 
+		{
 			printUsage();
-		} else {
-			String address = args[0];
-			Integer port = new Integer(args[1]);
-			Client client = new Client(address, port);
-			IHM.run(client, args);
+		} 
+		else 
+		{
+			client = new Client(args[0],Integer.parseInt(args[1]));
+			ChatIHM.main(args);
 		}
 	}
 
