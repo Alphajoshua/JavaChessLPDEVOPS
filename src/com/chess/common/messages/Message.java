@@ -9,6 +9,27 @@ public class Message extends SendableMessage {
 	private String message;
 	
 	/**
+	 * Create a new empty message
+	 * 
+	 */
+	public Message()
+	{
+		id=0;
+		name="";
+		message="";
+	}
+	/**
+	 * Create a new message by copy
+	 * 
+	 */
+	public Message(Message raw)
+	{
+		id=raw.getId();
+		name=raw.getName();
+		message=raw.getMessage();
+	}
+	
+	/**
 	 * Create a new message without give sender
 	 * 
 	 * @param id the sender ID
@@ -50,6 +71,15 @@ public class Message extends SendableMessage {
 	public String getMessage() {
 		return message;
 	}
+	
+	/**
+	 * Set a new text in message
+	 * 
+	 * @param message the new text of message
+	 */
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
 	/**
 	 * Set a new sender name
@@ -67,6 +97,17 @@ public class Message extends SendableMessage {
 	
 	@Override
 	public String toShow() {
-		return name + " > " + message;
+		String result = "";
+		/*if(TODO.getLastSender() == name)
+		{
+			for(int i =0; i< name.length()+2;++i)
+			{
+				result +=" ";
+			}
+			result+= message;
+		}
+		else*/
+			result = name + ":: " + message;
+		return result;
 	}
 }
