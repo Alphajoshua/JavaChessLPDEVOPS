@@ -5,7 +5,7 @@ import com.chess.common.Account;
 
 public class MainClient {
 
-	private static Client client;
+	public static Client client;
 	public static Client getClient() {
 		return client;
 	}
@@ -19,12 +19,14 @@ public class MainClient {
 	}
 	
 	public static void main(String[] args) {
-		if (args.length != 2) {
+		if (args.length != 2) 
+		{
 			printUsage();
-		} else {
-			client = new Client(args[0], Integer.parseInt(args[1]));
-			IHM.run(client, args);
-			AccountIHM.run(args);
+		} 
+		else 
+		{
+			client = new Client(args[0],Integer.parseInt(args[1]));
+			ChatIHM.main(args);
 		}
 	}
 
