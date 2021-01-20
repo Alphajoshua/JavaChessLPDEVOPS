@@ -1,6 +1,10 @@
 package com.chess.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.chess.server.manager.OldGameManager;
 
 @SuppressWarnings("serial")
 public class Account implements Serializable {
@@ -9,6 +13,7 @@ public class Account implements Serializable {
 	
 	private final long id;
 	private String name;
+	private final List<OldGame> oldGames = new ArrayList<>();
 	
 	/**
 	 * New account just created from database
@@ -19,6 +24,11 @@ public class Account implements Serializable {
 	public Account(long id, String name) {
 		this.id = id;
 		this.name = name;
+		load();
+	}
+	
+	private void load() {
+		new Thread(() -> oldGames.addAll(OldGameManager.loadAllGamesOf(getId())));
 	}
 	
 	/**
