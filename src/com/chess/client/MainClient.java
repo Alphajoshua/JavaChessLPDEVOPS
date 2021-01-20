@@ -1,11 +1,22 @@
 package com.chess.client;
 
-import com.chess.client.chat.ChatIHM;
+import com.chess.client.account.AccountIHM;
+import com.chess.common.Account;
 
 public class MainClient {
 
-	//STATIC CLIENT
 	public static Client client;
+	public static Client getClient() {
+		return client;
+	}
+	
+	private static Account account;
+	public static Account getAccount() {
+		return account;
+	}
+	public static void setAccount(Account account) {
+		MainClient.account = account;
+	}
 	
 	public static void main(String[] args) {
 		if (args.length != 2) 
