@@ -10,6 +10,7 @@ import com.chess.game.Spot;
 
 public class King extends Piece {
 	private boolean castlingDone = false; 
+	private boolean isChecked = false;
 	  
     public King(boolean white) 
     { 
@@ -25,6 +26,11 @@ public class King extends Piece {
     { 
         this.castlingDone = castlingDone; 
     } 
+    
+    /***
+     * 
+     */
+    
 
 	@Override
 	public boolean canMove(Board board, Spot start, Spot end) {
@@ -35,8 +41,8 @@ public class King extends Piece {
 			return false;
 		}
 
-		int x = Math.abs(start.getX() - end.getX());
-		int y = Math.abs(start.getY() - end.getY());
+		int x = Math.abs(start.getX() - end.getX()); // Number of tiles crossed on the x axis
+		int y = Math.abs(start.getY() - end.getY()); // Number of tiles crossed on the y axis
 		if (x + y == 1) {
 			// TO-DO
 			// check if this move will not result in the king

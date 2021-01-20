@@ -14,7 +14,12 @@ public class Board {
     public Board() 
     { 
         this.resetBoard(); 
-    } 
+    }
+    
+    public Spot[][] getBoxes()
+    {
+    	return this.boxes;
+    }
   
     public Spot getBox(int x, int y) throws Exception 
     {   

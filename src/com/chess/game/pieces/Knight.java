@@ -17,8 +17,9 @@ public class Knight extends Piece {
             return false; 
         }
         
-        int x = Math.abs(start.getX() - end.getX()); 
-        int y = Math.abs(start.getY() - end.getY()); 
+        int x = Math.abs(start.getX() - end.getX()); // Number of tiles crossed on the x axis
+		int y = Math.abs(start.getY() - end.getY()); // Number of tiles crossed on the y axis
+		// Can only move on a 1 x 2 pattern (L Shape)
         return x * y == 2;
     } 
 

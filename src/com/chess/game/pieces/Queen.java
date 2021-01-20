@@ -17,6 +17,8 @@ public class Queen extends Piece {
 		}
 		
 		// The queen can get anywhere, except on friendly spots
+		int x = Math.abs(start.getX() - end.getX()); // Number of tiles crossed on the x axis
+		int y = Math.abs(start.getY() - end.getY()); // Number of tiles crossed on the y axis
 		return true; 
 	}
 

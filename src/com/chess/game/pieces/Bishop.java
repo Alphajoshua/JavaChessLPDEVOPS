@@ -16,8 +16,8 @@ public class Bishop extends Piece {
 			return false;
 		}
 
-		int x = Math.abs(start.getX() - end.getX());
-		int y = Math.abs(start.getY() - end.getY());
+		int x = Math.abs(start.getX() - end.getX()); // Number of tiles crossed on the x axis
+		int y = Math.abs(start.getY() - end.getY()); // Number of tiles crossed on the y axis
 		return x == y;
 	}
 
