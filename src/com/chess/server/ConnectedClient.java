@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import com.chess.common.Account;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
@@ -18,7 +19,7 @@ public class ConnectedClient implements Runnable {
 	private final int id;
 	private final Socket socket;
 	private final Server server;
-	private String name;
+	private Account account;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	
@@ -29,7 +30,8 @@ public class ConnectedClient implements Runnable {
 	 * @param socket the client socket
 	 */
 	public ConnectedClient(Server server, Socket socket) {
-		this.name = String.valueOf(this.id = (idCounter++));
+		this.id = (idCounter++);
+		this.account = new Account();
 		this.socket = socket;
 		this.server = server;
 		try {
@@ -41,27 +43,22 @@ public class ConnectedClient implements Runnable {
 		System.out.println("New client with ID: " + id);
 		new Thread(() -> { // send a connection message for client which connect previously
 			for(ConnectedClient other : new ArrayList<>(server.getClients()))
-				sendMessage(new StatusUpdate(StatusType.LOGIN, other.getId(), other.getName()));
+				sendMessage(new StatusUpdate(StatusType.LOGIN, other.getAccount()));
 		}).start();
 		server.addClient(this);
 	}
 	
 	/**
-	 * Get the name of the connected client
+	 * Get the account of the connected client
 	 * 
-	 * @return the client name
+	 * @return the client account
 	 */
-	public String getName() {
-		return name;
+	public Account getAccount() {
+		return account;
 	}
 	
-	/**
-	 * Change the client name
-	 * 
-	 * @param name the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 	
 	@Override
@@ -78,9 +75,8 @@ public class ConnectedClient implements Runnable {
 					server.disconnectClient(this);
 					return;
 				}
-				m.setId(id);
-				name = m.getName();
-				server.broadcastMessage(m, id);
+				this.account = m.getSender();
+				server.broadcastMessage(m);
 			} catch (EOFException e) {
 				System.out.println("User " + id +  " disconnected.");
 				break;

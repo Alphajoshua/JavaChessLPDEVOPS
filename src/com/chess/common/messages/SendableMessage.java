@@ -33,34 +33,6 @@ public abstract class SendableMessage implements Serializable {
 		this.account = acc;
 	}
 	
-	
-	/**
-	 * Edit the ID of the sender ID
-	 * 
-	 * @param id the ID of the sender
-	 * @deprecated use {@link #getSender()} instead
-	 */
-	@Deprecated
-	public abstract void setId(int id);
-	
-	/**
-	 * Get the sender ID
-	 * 
-	 * @return the sender ID
-	 * @deprecated use {@link #getSender()} instead
-	 */
-	@Deprecated
-	public abstract int getId();
-	
-	/**
-	 * Get the name of the sender
-	 * 
-	 * @return the sender name
-	 * @deprecated use {@link #getSender()} instead
-	 */
-	@Deprecated
-	public abstract String getName();
-	
 	/**
 	 * Get account of the sender
 	 * 

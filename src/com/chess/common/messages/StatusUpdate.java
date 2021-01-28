@@ -1,12 +1,20 @@
 package com.chess.common.messages;
 
+import com.chess.common.Account;
+
 public class StatusUpdate extends SendableMessage {
 
 	private static final long serialVersionUID = 656145611L;
 	
 	private final StatusType type;
-	private final String name;
-	private int id;
+	
+	/**
+	 * Create a new status update
+	 * Used for stream
+	 */
+	public StatusUpdate() {
+		this.type = StatusType.LOGIN;
+	}
 	
 	/**
 	 * Create a new status update 
@@ -15,10 +23,9 @@ public class StatusUpdate extends SendableMessage {
 	 * @param id the sender ID
 	 * @param userName the sender name
 	 */
-	public StatusUpdate(StatusType type, int id, String userName) {
+	public StatusUpdate(StatusType type, Account account) {
+		super(account);
 		this.type = type;
-		this.id = id;
-		this.name = userName;
 	}
 	
 	/**
@@ -31,23 +38,8 @@ public class StatusUpdate extends SendableMessage {
 	}
 	
 	@Override
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	@Override
-	public int getId() {
-		return id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
 	public String toShow() {
-		return "[Status] " + name + " s'est " + type.getName() + " !";
+		return "[Status] " + getSender().getName() + " s'est " + type.getName() + " !";
 	}
 	
 	public static enum StatusType {

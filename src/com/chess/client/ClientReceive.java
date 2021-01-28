@@ -2,6 +2,7 @@ package com.chess.client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -38,8 +39,11 @@ public class ClientReceive implements Runnable {
 				} else {
 					isActive = false;
 				}
+			} catch (StreamCorruptedException e) {
+				// idk how this error appear, but doesn't affect feature
 			} catch (SocketException e) {
 				System.out.println("Just disconnect to server.");
+				break;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

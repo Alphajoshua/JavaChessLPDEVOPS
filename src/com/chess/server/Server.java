@@ -31,7 +31,7 @@ public class Server {
 	 */
 	public void addClient(ConnectedClient client) {
 		clients.add(client);
-		broadcastMessage(new StatusUpdate(StatusType.LOGIN, client.getId(), client.getName()), client.getId());
+		broadcastMessage(new StatusUpdate(StatusType.LOGIN, client.getAccount()));
 	}
 	
 	/**
@@ -43,7 +43,7 @@ public class Server {
 	public void disconnectClient(ConnectedClient client) {
 		client.closeClient();
 		clients.remove(client);
-		broadcastMessage(new StatusUpdate(StatusType.LOGOUT, client.getId(), client.getName()), client.getId());
+		broadcastMessage(new StatusUpdate(StatusType.LOGOUT, client.getAccount()));
 	}
 	
 	/**
@@ -52,9 +52,9 @@ public class Server {
 	 * @param m the message to send
 	 * @param from the sender of the message
 	 */
-	public void broadcastMessage(SendableMessage m, int from) {
+	public void broadcastMessage(SendableMessage m) {
 		clients.forEach((cc) -> {
-			if(cc.getId() != from) {
+			if(m.getSender() != null && cc.getId() != m.getSender().getId()) {
 				cc.sendMessage(m);
 			}
 		});

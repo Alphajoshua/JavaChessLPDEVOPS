@@ -37,7 +37,7 @@ public class Room {
 	public String getLastSender()
 	{
 		if(listSentMessages.size()>0)
-			return listSentMessages.get(0).getName();
+			return listSentMessages.get(0).getSender().getName();
 		else
 			return "";
 	}

@@ -14,7 +14,8 @@ public class Account implements Serializable {
 	private final long id;
 	private String name;
 	private final List<OldGame> oldGames = new ArrayList<>();
-	
+	private boolean isTemp = false;
+
 	/**
 	 * New account just created from database
 	 * 
@@ -25,6 +26,19 @@ public class Account implements Serializable {
 		this.id = id;
 		this.name = name;
 		load();
+	}
+	
+	/**
+	 * New temporary account
+	 * 
+	 * @param id the account id
+	 * @param name the account name
+	 * @param temp if the account is temp
+	 */
+	public Account() {
+		this.id = -1;
+		this.name = "Not logged";
+		this.isTemp = true;
 	}
 	
 	private void load() {
@@ -56,5 +70,9 @@ public class Account implements Serializable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public boolean isTemp() {
+		return isTemp;
 	}
 }

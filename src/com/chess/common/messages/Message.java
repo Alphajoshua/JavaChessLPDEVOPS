@@ -1,11 +1,11 @@
 package com.chess.common.messages;
 
+import com.chess.common.Account;
+
 public class Message extends SendableMessage {
 
 	private static final long serialVersionUID = 65156145614561L;
-
-	private int id;
-	private String name;
+	
 	private String message;
 	
 	/**
@@ -14,9 +14,7 @@ public class Message extends SendableMessage {
 	 */
 	public Message()
 	{
-		id=0;
-		name="";
-		message="";
+		message = "";
 	}
 	/**
 	 * Create a new message by copy
@@ -24,43 +22,19 @@ public class Message extends SendableMessage {
 	 */
 	public Message(Message raw)
 	{
-		id=raw.getId();
-		name=raw.getName();
-		message=raw.getMessage();
-	}
-	
-	/**
-	 * Create a new message without give sender
-	 * 
-	 * @param id the sender ID
-	 * @param message the message
-	 */
-	public Message(int id, String message) {
-		this.id = id;
-		this.message = message;
+		super(raw.getSender());
+		message = raw.getMessage();
 	}
 	
 	/**
 	 * Create a new message
 	 * 
-	 * @param id the sender ID
-	 * @param message the message
+	 * @param sender the sender account
 	 * @param sender the name of sender
 	 */
-	public Message(int id, String message, String sender) {
-		this.id = id;
+	public Message(Account sender, String message) {
+		super(sender);
 		this.message = message;
-		this.name = sender;
-	}
-
-	@Override
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	@Override
-	public int getId() {
-		return id;
 	}
 	
 	/**
@@ -80,20 +54,6 @@ public class Message extends SendableMessage {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
-	/**
-	 * Set a new sender name
-	 * 
-	 * @param sender the new name of sender
-	 */
-	public void setName(String sender) {
-		this.name = sender;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
 	
 	@Override
 	public String toShow() {
@@ -107,7 +67,7 @@ public class Message extends SendableMessage {
 			result+= message;
 		}
 		else*/
-			result = name + ":: " + message;
+			result = getSender().getName() + ": " + message;
 		return result;
 	}
 }
