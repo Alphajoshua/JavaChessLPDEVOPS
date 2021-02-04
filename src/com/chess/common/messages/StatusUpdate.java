@@ -46,6 +46,7 @@ public class StatusUpdate extends SendableMessage {
 		LOGIN("connecté"),
 		LOGOUT("déconnecté");
 		
+		private static final long serialVersionUID = 0;
 		private final String name;
 		
 		private StatusType(String name) {

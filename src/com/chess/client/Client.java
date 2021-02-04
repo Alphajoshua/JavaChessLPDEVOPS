@@ -6,12 +6,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chess.client.account.AccountController;
 import com.chess.client.chat.ChatPanel;
 import com.chess.common.Account;
 import com.chess.common.messages.Message;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
+import com.chess.common.messages.login.LoginResult;
 
 import javafx.application.Platform;
 
@@ -100,7 +102,7 @@ public class Client {
 		return onlineUsers;
 	}
 	
-	public void sendMessage(Message mess)
+	public void sendMessage(SendableMessage mess)
 	{
 		try 
 		{
@@ -117,7 +119,7 @@ public class Client {
 	 * @param mess the message which have been received
 	 */
 	public void messageReceived(SendableMessage mess) {
-		
+		System.out.println("Message received " + mess);
 		Message rawResult = new Message();
 		
 		if(mess instanceof StatusUpdate) 
@@ -126,28 +128,27 @@ public class Client {
 			if(state.getType().equals(StatusType.LOGIN)) 
 			{
 				onlineUsers.add(state.getSender());
-			} 
-			
+			}
 			else 
 			{
 				onlineUsers.remove(state.getSender());
 			}
 			rawResult.setSender(state.getSender());
 			rawResult.setMessage(state.toShow());
-		}
-		
-		if(mess instanceof Message)
+		} else if(mess instanceof Message)
 		{
 			rawResult = (Message) mess;
-		}
-		
-		else 
+		} else if(mess instanceof LoginResult) {
+			AccountController.manageConnect((LoginResult) mess);
+			return;
+		} else 
 		{
 			onlineUsers.add(mess.getSender());
 		}
 		final Message result = rawResult;
 		try {
-			Platform.runLater(() -> view.getChatCTRL().printMessage(view.getReceivedText(),result));
+			if(view != null)
+				Platform.runLater(() -> view.getChatCTRL().printMessage(view.getReceivedText(),result));
 		} catch (Exception e) {
 			
 		}

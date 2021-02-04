@@ -7,8 +7,9 @@ import com.chess.common.Account;
  * 
  * @author Elikill58
  */
-@SuppressWarnings("serial")
 public abstract class ServerMessage extends SendableMessage {
+
+	private static final long serialVersionUID = 7852174356887803576L;
 
 	public ServerMessage(Account acc) {
 		super(acc);

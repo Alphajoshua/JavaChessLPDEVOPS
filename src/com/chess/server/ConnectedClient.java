@@ -10,8 +10,13 @@ import java.util.ArrayList;
 
 import com.chess.common.Account;
 import com.chess.common.messages.SendableMessage;
+import com.chess.common.messages.ServerMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
+import com.chess.common.messages.login.Login;
+import com.chess.common.messages.login.LoginResult;
+import com.chess.common.messages.login.LoginResult.LoginResultType;
+import com.chess.server.manager.AccountManager;
 
 public class ConnectedClient implements Runnable {
 
@@ -75,8 +80,12 @@ public class ConnectedClient implements Runnable {
 					server.disconnectClient(this);
 					return;
 				}
-				this.account = m.getSender();
-				server.broadcastMessage(m);
+				if(m.getSender() != null)
+					this.account = m.getSender();
+				if(m instanceof ServerMessage)
+					manageMessage((ServerMessage) m);
+				else
+					server.broadcastMessage(m);
 			} catch (EOFException e) {
 				System.out.println("User " + id +  " disconnected.");
 				break;
@@ -86,6 +95,19 @@ public class ConnectedClient implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(0);
+			}
+		}
+	}
+	
+	public void manageMessage(ServerMessage srv) {
+		if(srv instanceof Login) {
+			Login login = (Login) srv;
+			Object obj = AccountManager.getAccount(login.getLogin(), login.getPassword());
+			if(obj instanceof Account) {
+				account = (Account) obj;
+				sendMessage(new LoginResult(LoginResultType.LOGIN_SUCCESS, account));
+			} else if(obj instanceof LoginResultType) {
+				sendMessage(new LoginResult((LoginResultType) obj, null));
 			}
 		}
 	}
