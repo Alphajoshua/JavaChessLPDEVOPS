@@ -3,9 +3,11 @@ package com.chess.client;
 
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.chess.client.chat.ChatPanel;
+import com.chess.common.Account;
 import com.chess.common.messages.Message;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
@@ -19,7 +21,7 @@ public class Client {
 	private final int port;
 	private Socket socket;
 	private ObjectOutputStream out;
-	private HashMap<Integer, String> onlineUsers = new HashMap<>();
+	private List<Account> onlineUsers = new ArrayList<>();
 	private ChatPanel view;
 	
 	/**
@@ -94,7 +96,7 @@ public class Client {
 	 * 
 	 * @return online users
 	 */
-	public HashMap<Integer, String> getOnlineUsers() {
+	public List<Account> getOnlineUsers() {
 		return onlineUsers;
 	}
 	
@@ -102,10 +104,8 @@ public class Client {
 	{
 		try 
 		{
-		
-		getOut().writeObject(mess);
-		getOut().flush();
-		
+			getOut().writeObject(mess);
+			getOut().flush();
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
@@ -125,27 +125,27 @@ public class Client {
 			StatusUpdate state = (StatusUpdate) mess;
 			if(state.getType().equals(StatusType.LOGIN)) 
 			{
-				onlineUsers.put(state.getId(), state.getName());
+				onlineUsers.add(state.getSender());
 			} 
 			
 			else 
 			{
-				onlineUsers.remove(state.getId());
+				onlineUsers.remove(state.getSender());
 			}
-			rawResult.setName(state.getName());
+			rawResult.setSender(state.getSender());
 			rawResult.setMessage(state.toShow());
 		}
 		
 		if(mess instanceof Message)
 		{
-			rawResult = (Message)mess;
+			rawResult = (Message) mess;
 		}
 		
 		else 
 		{
-			onlineUsers.put(mess.getId(), mess.getName());
+			onlineUsers.add(mess.getSender());
 		}
-		final Message result = new Message(rawResult);
+		final Message result = rawResult;
 		try {
 			Platform.runLater(() -> view.getChatCTRL().printMessage(view.getReceivedText(),result));
 		} catch (Exception e) {

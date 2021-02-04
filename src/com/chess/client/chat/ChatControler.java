@@ -1,6 +1,7 @@
 package com.chess.client.chat;
 
 import com.chess.client.Client;
+import com.chess.client.MainClient;
 import com.chess.common.messages.Message;
 
 import javafx.application.Platform;
@@ -14,7 +15,7 @@ public class ChatControler {
 	
 	public void sendAndDisplayMessage(TextArea textToSend, TextFlow receivedText, Client client)
 	{
-		Message toSend = new Message(0,textToSend.getText());
+		Message toSend = new Message(MainClient.getAccount(), textToSend.getText());
 		printMessage(receivedText,toSend);
 		clearMessage(textToSend);
 		client.sendMessage(toSend);

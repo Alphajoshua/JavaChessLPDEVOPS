@@ -88,7 +88,7 @@ public class IHM extends Application {
 			@Override
 			public void handle(MouseEvent e) {
 				try {
-					Message mess = new Message(-1, textInput.getText(), userNameInput.getText());
+					Message mess = new Message(MainClient.getAccount(), textInput.getText());
 					client.getOut().writeObject(mess);
 					client.getOut().flush();
 					textInput.setText("");
@@ -135,8 +135,8 @@ public class IHM extends Application {
 		Label onlineUserInformationtext = new Label("Utilisateur(s) connecté :");
 		onlineUserInformationtext.setPrefWidth(170);
 		childUsers.add(onlineUserInformationtext);
-		client.getOnlineUsers().forEach((id, name) -> {
-			Label userText = new Label(name);
+		client.getOnlineUsers().forEach((sender) -> {
+			Label userText = new Label(sender.getName());
 			userText.setPrefWidth(170);
 			childUsers.add(userText);
 		});
