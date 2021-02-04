@@ -11,6 +11,7 @@ public class Account implements Serializable {
 	
 	public static final Account SERVER_ACCOUNT = new Account(-1, "Server");
 	
+	private static int compteur = 0;
 	private final long id;
 	private String name;
 	private final List<OldGame> oldGames = new ArrayList<>();
@@ -36,7 +37,8 @@ public class Account implements Serializable {
 	 * @param temp if the account is temp
 	 */
 	public Account() {
-		this.id = -1;
+		this.id = compteur;
+		compteur++;
 		this.name = "Not logged";
 		this.isTemp = true;
 	}

@@ -147,6 +147,7 @@ public class Client {
 		}
 		final Message result = rawResult;
 		try {
+			if(view!=null)
 			Platform.runLater(() -> view.getChatCTRL().printMessage(view.getReceivedText(),result));
 		} catch (Exception e) {
 			

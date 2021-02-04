@@ -2,28 +2,35 @@ package com.chess.common.messages;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chess.common.Account;
+
 public class Room {
 
-	private List<String> interlocutor;
+	private List<Account> interlocutors;
 	private List<Message> listSentMessages;
 	
-	public Room(String firstInterlocutor,String secondInterlocutor)
+	public Room(Account firstInterlocutor,Account secondInterlocutor)
 	{
-		interlocutor = new ArrayList<String>();
+		interlocutors = new ArrayList<Account>();
 		listSentMessages = new ArrayList<Message>();
 		
-		interlocutor.add(firstInterlocutor);
-		interlocutor.add(secondInterlocutor);
+		interlocutors.add(firstInterlocutor);
+		interlocutors.add(secondInterlocutor);
 	}
 	
-	public void addInterlocutor (String name)
+	public List<Account> getInterlocutors()
 	{
-		interlocutor.add(name);
+		return interlocutors;
 	}
 	
-	public void deleteInterlocutor (String name)
+	public void addInterlocutor (Account user)
 	{
-		interlocutor.remove(name);
+		interlocutors.add(user);
+	}
+	
+	public void deleteInterlocutor (Account user)
+	{
+		interlocutors.remove(user);
 	}
 	
 	public String getLastMessage()
@@ -46,5 +53,5 @@ public class Room {
 	{
 		listSentMessages.add(0,newMessage);
 	}
-	
+		
 }
