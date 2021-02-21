@@ -32,9 +32,15 @@ public class ChatControler {
 					{
 						Label text = new Label (message.toShow()+"\n");
 						text.setWrapText(true);
-						text.prefWidthProperty().bind(receivedText.prefWidthProperty().multiply(2f/3f));
-						text.setTextAlignment(TextAlignment.LEFT);
-						receivedText.getChildren().add(text);
+						text.maxWidthProperty().bind(receivedText.prefWidthProperty().multiply(0.60));
+						
+						HBox box = new HBox();
+						box.prefWidthProperty().bind(receivedText.prefWidthProperty().add(5));
+						box.getChildren().add(text);
+						
+						box.setAlignment(Pos.BASELINE_LEFT);
+						
+						receivedText.getChildren().add(box);
 					}
 				});
 		
@@ -49,10 +55,14 @@ public class ChatControler {
 			{
 				Label text = new Label (message.toShow()+"\n");
 				text.setWrapText(true);
-				text.prefWidthProperty().bind(receivedText.prefWidthProperty().subtract(5));
-				text.setTextAlignment(TextAlignment.RIGHT);
-				text.setAlignment(Pos.CENTER_RIGHT);
-				receivedText.getChildren().add(text);
+				text.maxWidthProperty().bind(receivedText.prefWidthProperty().multiply(0.60));
+				
+				HBox box = new HBox();
+				box.prefWidthProperty().bind(receivedText.prefWidthProperty().subtract(5));
+				box.getChildren().add(text);
+				
+				box.setAlignment(Pos.BASELINE_RIGHT);
+				receivedText.getChildren().add(box);
 			}
 		});
 	}
