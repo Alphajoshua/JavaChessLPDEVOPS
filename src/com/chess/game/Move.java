@@ -1,6 +1,7 @@
-package com.chess.game;
+package chess.game;
 
-import com.chess.game.pieces.Piece;
+import chess.game.Spot;
+import chess.game.pieces.Piece;
 
 public class Move { 
 	private Player player; 

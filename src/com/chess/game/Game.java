@@ -1,11 +1,12 @@
-package com.chess.game;
+package chess.game;
 
 import java.util.List;
 
-import com.chess.game.pieces.Board;
-import com.chess.game.pieces.King;
-import com.chess.game.pieces.Piece;
-import com.chess.game.Spot;
+import chess.game.Board;
+import chess.game.pieces.King;
+import chess.game.pieces.Piece;
+import chess.game.Spot;
+import java.util.ArrayList;
 
 public class Game {
 	private Player[] players;
@@ -13,12 +14,23 @@ public class Game {
 	private Player playerCurrentTurn;
 	private GameStatus status;
 	private List<Move> movesPlayed;
+        
+        public Game(Board board)
+        {           
+            this.players = new Player[2];
+            this.board = board;
+            this.movesPlayed = new ArrayList<Move>();            
+        }
 
-	private void initialize(Player p1, Player p2) {
+    public Game() {
+         //To change body of generated methods, choose Tools | Templates.
+    }
+
+	public void initialize(Player p1, Player p2) {
 		players[0] = p1;
 		players[1] = p2;
 
-		board.resetBoard();
+		// board.resetBoard(); // initialize the spots
 
 		if (p1.isWhiteSide()) {
 			this.playerCurrentTurn = p1;
@@ -41,22 +53,23 @@ public class Game {
 		this.status = status;
 	}
 
-	public boolean playerMove(Player player, int startX, int startY, int endX, int endY) throws Exception {
+	public boolean playerMove(Player player, int startX, int startY, int endX, int endY) throws Exception {            
 		Spot startBox = board.getBox(startX, startY);
-		Spot endBox = board.getBox(startY, endY);
-		Move move = new Move(player, startBox, endBox);
-		return this.makeMove(move, player);
-	}
+		Spot endBox = board.getBox(endX, endY);
+		Move move = new Move(player, startBox, endBox); 
+		return this.makeMove(move, player);                  
+	}        
 
 	/***
 	 * Check if the king is threatened on the board,
 	 * iterate all over the board to find the king of the current player,
 	 * check if a piece could kill the king
 	 * 
-	 * @return true if the king is checked, false if safe
+	 * @return true if the king is safe, false if threatened
 	 * @throws Exception
 	 */
 	public boolean checkKingSafety() throws Exception {
+            // Get the king of the current player color
 		boolean kingColour = this.playerCurrentTurn.isWhiteSide();
 		int kingX = 0;
 		int kingY = 0;
@@ -69,17 +82,18 @@ public class Game {
 				}
 			}
 		}
+                // Check if any pieces can take the king
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; i < 8; i++) {
 				if (this.board.getBoxes()[i][j].getPiece() != null) {
 					Piece piece = this.board.getBoxes()[i][j].getPiece();
 					if (piece.canMove(this.board, this.board.getBoxes()[i][j], this.board.getBox(kingX, kingY))) {
-						return true;
+						return false;
 					}
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -90,7 +104,6 @@ public class Game {
 	 * @param player
 	 * @return true if the move is valid, false otherwise
 	 */
-
 	private boolean makeMove(Move move, Player player) {
 		Piece sourcePiece = move.getStart().getPiece();
 		if (sourcePiece == null) {
@@ -110,7 +123,6 @@ public class Game {
 		if (!sourcePiece.canMove(board, move.getStart(), move.getEnd())) {
 			return false;
 		}
-
 		// kill? (can not be a King)
 		Piece destPiece = move.getEnd().getPiece();
 		if (destPiece != null && !(destPiece instanceof King)) {
@@ -146,7 +158,6 @@ public class Game {
 		} else {
 			this.playerCurrentTurn = players[0];
 		}
-
 		return true;
 	}
 }

@@ -1,4 +1,4 @@
-package com.chess.game;
+package chess.game;
 
 public enum GameStatus { 
     ACTIVE, 

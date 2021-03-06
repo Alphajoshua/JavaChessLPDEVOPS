@@ -1,8 +1,8 @@
-package com.chess.game;
+package chess.game;
 
 import java.util.ArrayList;
 
-import com.chess.game.pieces.Piece;
+import chess.game.pieces.Piece;
 
 /**
  * Represent the logic of our game, it contains the main actions on the board from the server.
