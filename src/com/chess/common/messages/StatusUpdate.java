@@ -2,9 +2,8 @@ package com.chess.common.messages;
 
 import com.chess.common.Account;
 
+@SuppressWarnings("serial")
 public class StatusUpdate extends SendableMessage {
-
-	private static final long serialVersionUID = 656145611L;
 	
 	private final StatusType type;
 	

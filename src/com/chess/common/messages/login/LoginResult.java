@@ -3,9 +3,9 @@ package com.chess.common.messages.login;
 import com.chess.common.Account;
 import com.chess.common.messages.ServerMessage;
 
+@SuppressWarnings("serial")
 public class LoginResult extends ServerMessage {
 
-	private static final long serialVersionUID = 7845248587085921982L;
 	private final Account loggedAccount;
 	private final LoginResultType loginResult;
 	
@@ -26,8 +26,8 @@ public class LoginResult extends ServerMessage {
 	public static enum LoginResultType {
 		LOGIN_SUCCESS(true, "Connection réussi !"),
 		WRONG_PASSWORD(false, "Mauvaise mot de passe"),
-		UNKNOW_ACCOUNT(false, "Compte inconnu"),
-		REGISTER_SUCCESS(true, "Inscription effectué");
+		UNKNOW_REQUEST(false, "Requête inconnu"),
+		UNKNOW_ACCOUNT(false, "Compte inconnu");
 		
 		private final boolean success;
 		private final String message;

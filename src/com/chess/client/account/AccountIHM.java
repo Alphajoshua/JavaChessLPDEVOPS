@@ -16,6 +16,7 @@ public class AccountIHM extends Application {
 	
 	private float width = 400;
 	private float height = 500;
+	private AccountPanel panel;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -24,7 +25,7 @@ public class AccountIHM extends Application {
 		primaryStage.setMinWidth(width);
 		GridPane chatGroup = new GridPane(); 
 		
-		chatGroup.getChildren().add(new AccountPanel(width));
+		chatGroup.getChildren().add(panel = new AccountPanel(width));
 		
 		Scene chatScene = new Scene(chatGroup, width, height);
 		chatScene.setFill(BACKGROUND_COLOR);
@@ -36,8 +37,10 @@ public class AccountIHM extends Application {
 
 	@Override
 	public void stop() throws Exception {
-		client.disconnectServer();
-		System.exit(0);
+		if(panel.haveToCloseConnection) {
+			client.disconnectServer();
+			System.exit(0);
+		}
 	}
 	
 	public static void main(String[] args) {

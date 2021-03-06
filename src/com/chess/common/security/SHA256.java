@@ -16,7 +16,7 @@ public class SHA256 {
 	}
 
 	public static boolean comparePassword(String hash, String password) {
-		if(password.contains("\\$"))
+		if(password.startsWith("$SHA$"))
 			return hash.equals(password);
 		String[] line = hash.split("\\$");
 		return hash.equals(hash(password, line[2]));

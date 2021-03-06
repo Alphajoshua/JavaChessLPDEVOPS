@@ -6,16 +6,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 
 import com.chess.common.Account;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.ServerMessage;
-import com.chess.common.messages.StatusUpdate;
-import com.chess.common.messages.StatusUpdate.StatusType;
 import com.chess.common.messages.login.Login;
 import com.chess.common.messages.login.LoginResult;
 import com.chess.common.messages.login.LoginResult.LoginResultType;
+import com.chess.common.messages.login.Register;
+import com.chess.common.messages.login.RegisterResult;
+import com.chess.common.messages.login.RegisterResult.RegisterResultType;
 import com.chess.server.manager.AccountManager;
 
 public class ConnectedClient implements Runnable {
@@ -46,10 +46,10 @@ public class ConnectedClient implements Runnable {
 			e.printStackTrace();
 		}
 		System.out.println("New client with ID: " + id);
-		new Thread(() -> { // send a connection message for client which connect previously
+		/*new Thread(() -> { // send a connection message for client which connect previously
 			for(ConnectedClient other : new ArrayList<>(server.getClients()))
 				sendMessage(new StatusUpdate(StatusType.LOGIN, other.getAccount()));
-		}).start();
+		}).start();*/
 		server.addClient(this);
 	}
 	
@@ -72,10 +72,11 @@ public class ConnectedClient implements Runnable {
 			try {
 				if(in == null) {
 					System.out.println("Failed to get input stream.");
-					closeClient();
+					server.disconnectClient(this);
 					return;
 				}
 				SendableMessage m = (SendableMessage) in.readObject();
+				System.out.println("Received message: " + m);
 				if(m == null) {
 					server.disconnectClient(this);
 					return;
@@ -87,28 +88,47 @@ public class ConnectedClient implements Runnable {
 				else
 					server.broadcastMessage(m);
 			} catch (EOFException e) {
+				server.disconnectClient(this);
 				System.out.println("User " + id +  " disconnected.");
 				break;
 			} catch (SocketException e) {
+				server.disconnectClient(this);
 				System.out.println("User " + id +  " just disconnect.");
 				return;
 			} catch (Exception e) {
+				server.disconnectClient(this);
 				e.printStackTrace();
 				System.exit(0);
+				return;
 			}
 		}
+		System.out.println("Socket ended");
+		server.disconnectClient(this);
 	}
 	
 	public void manageMessage(ServerMessage srv) {
+		System.out.println("Received server message: " + srv.getClass().getCanonicalName());
 		if(srv instanceof Login) {
 			Login login = (Login) srv;
 			Object obj = AccountManager.getAccount(login.getLogin(), login.getPassword());
+			System.out.println("Login acc: " + obj);
 			if(obj instanceof Account) {
 				account = (Account) obj;
 				sendMessage(new LoginResult(LoginResultType.LOGIN_SUCCESS, account));
 			} else if(obj instanceof LoginResultType) {
 				sendMessage(new LoginResult((LoginResultType) obj, null));
+			} else {
+				sendMessage(new LoginResult(LoginResultType.UNKNOW_REQUEST, null));
 			}
+		} else if(srv instanceof Register) {
+			Register register = (Register) srv;
+			Account account = AccountManager.createNewAccount(register.getLogin(), register.getPassword());
+			if(account == null)
+				sendMessage(new RegisterResult(RegisterResultType.INTERNAL_ERROR, null));
+			else
+				sendMessage(new RegisterResult(RegisterResultType.REGISTER_SUCCESS, account));
+		} else {
+			System.out.println("Unknow server packet " + srv.getClass().getCanonicalName() + " from " + srv.getSender());
 		}
 	}
 
@@ -127,6 +147,10 @@ public class ConnectedClient implements Runnable {
 	 * @param m the message to send
 	 */
 	public void sendMessage(SendableMessage m) {
+		if(m == null) {
+			System.out.println("Trying to send null message ... Abort");
+			return;
+		}
 		try {
 			out.writeObject(m);
 			out.flush();
@@ -140,17 +164,15 @@ public class ConnectedClient implements Runnable {
 	 * (in/out/socket)
 	 */
 	public void closeClient() {
-		if(socket != null && socket.isConnected()) {
-			try {
-				if(in != null)
-					in.close();
-				if(out != null)
-					out.close();
-				if(socket != null)
-					socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			if(in != null)
+				in.close();
+			if(out != null)
+				out.close();
+			if(socket != null)
+				socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

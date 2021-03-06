@@ -97,7 +97,7 @@ public class AccountManager {
 			if(rs.next()) {
 				return getAccount(rs.getLong("id"));
 			} else {
-				return createNewAccount(name);
+				return createNewAccount(name, "");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -105,11 +105,12 @@ public class AccountManager {
 		return null;
 	}
 	
-	public static Account createNewAccount(String name) {
+	public static Account createNewAccount(String name, String password) {
 		try {
 			Connection co = Database.getConnection();
-			PreparedStatement insertStm = co.prepareStatement("INSERT INTO accounts(name) VALUES (?);", new String[] {"id"});
+			PreparedStatement insertStm = co.prepareStatement("INSERT INTO accounts(name, password) VALUES (?, ?);", new String[] {"id"});
 			insertStm.setString(1, name);
+			insertStm.setString(2, password);
 			int affectedRows = insertStm.executeUpdate();
 
 			if (affectedRows > 0) {

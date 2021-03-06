@@ -14,6 +14,7 @@ import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
 import com.chess.common.messages.login.LoginResult;
+import com.chess.common.messages.login.RegisterResult;
 
 import javafx.application.Platform;
 
@@ -104,8 +105,8 @@ public class Client {
 	
 	public void sendMessage(SendableMessage mess)
 	{
-		try 
-		{
+		System.out.println("Sending message: " + mess.getClass().getCanonicalName());
+		try {
 			getOut().writeObject(mess);
 			getOut().flush();
 		} catch (Exception exc) {
@@ -119,7 +120,7 @@ public class Client {
 	 * @param mess the message which have been received
 	 */
 	public void messageReceived(SendableMessage mess) {
-		System.out.println("Message received " + mess);
+		System.out.println("Message received: " + mess);
 		Message rawResult = new Message();
 		
 		if(mess instanceof StatusUpdate) 
@@ -140,6 +141,9 @@ public class Client {
 			rawResult = (Message) mess;
 		} else if(mess instanceof LoginResult) {
 			AccountController.manageConnect((LoginResult) mess);
+			return;
+		} else if(mess instanceof RegisterResult) {
+			AccountController.manageRegister((RegisterResult) mess);
 			return;
 		} else 
 		{

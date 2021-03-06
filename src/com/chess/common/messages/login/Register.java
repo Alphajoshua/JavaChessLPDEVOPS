@@ -1,11 +1,24 @@
 package com.chess.common.messages.login;
 
-public class Register extends Login {
-	
-	private static final long serialVersionUID = 3646488970534672518L;
+import com.chess.common.messages.ServerMessage;
 
-	public Register(String name, String password) {
-		super(name, password);
+@SuppressWarnings("serial")
+public class Register extends ServerMessage {
+
+	private final String name, passwd;
+	
+	public Register(String name, String hashedPasswd) {
+		super(null);
+		this.name = name;
+		this.passwd = hashedPasswd;
+	}
+	
+	public String getLogin() {
+		return name;
+	}
+	
+	public String getPassword() {
+		return passwd;
 	}
 
 }

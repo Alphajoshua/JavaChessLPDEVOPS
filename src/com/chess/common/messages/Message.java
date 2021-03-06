@@ -2,10 +2,9 @@ package com.chess.common.messages;
 
 import com.chess.common.Account;
 
+@SuppressWarnings("serial")
 public class Message extends SendableMessage {
-	
-	private static final long serialVersionUID = 3204261393535216623L;
-	
+		
 	private String message;
 	
 	/**
