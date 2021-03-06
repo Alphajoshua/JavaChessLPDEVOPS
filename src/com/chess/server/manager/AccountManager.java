@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 import com.chess.common.Account;
@@ -79,7 +80,7 @@ public class AccountManager {
 	}
 	
 	private static Account getAccount(ResultSet rs) throws SQLException {
-		return new Account(rs.getLong("id"), rs.getString("name"));
+		return new Account(rs.getLong("id"), rs.getString("name"), rs.getTimestamp("created_at"));
 	}
 	
 	/**
@@ -116,7 +117,7 @@ public class AccountManager {
 			if (affectedRows > 0) {
 				ResultSet rs = insertStm.getGeneratedKeys();
 			    if (rs.next())
-					return new Account(rs.getLong(1), name);
+					return new Account(rs.getLong(1), name, new Timestamp(System.currentTimeMillis()));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

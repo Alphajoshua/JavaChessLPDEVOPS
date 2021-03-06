@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.chess.client.account.AccountController;
-import com.chess.client.chat.ChatPanel;
 import com.chess.common.Account;
 import com.chess.common.messages.Message;
+import com.chess.common.messages.PlayerList;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
@@ -25,7 +25,6 @@ public class Client {
 	private Socket socket;
 	private ObjectOutputStream out;
 	private List<Account> onlineUsers = new ArrayList<>();
-	private ChatPanel view;
 	
 	/**
 	 * Create a new client and his socket
@@ -45,11 +44,6 @@ public class Client {
 		}
 
 		new Thread(new ClientReceive(this, socket)).start();
-	}
-	
-	public void setView(ChatPanel view)
-	{
-		this.view = view;
 	}
 	
 	/**
@@ -121,7 +115,7 @@ public class Client {
 	 */
 	public void messageReceived(SendableMessage mess) {
 		System.out.println("Message received: " + mess);
-		Message rawResult = new Message();
+		//Message rawResult = new Message();
 		
 		if(mess instanceof StatusUpdate) 
 		{
@@ -134,27 +128,34 @@ public class Client {
 			{
 				onlineUsers.remove(state.getSender());
 			}
-			rawResult.setSender(state.getSender());
-			rawResult.setMessage(state.toShow());
-		} else if(mess instanceof Message)
-		{
-			rawResult = (Message) mess;
+			/*rawResult.setSender(state.getSender());
+			rawResult.setMessage(state.toShow());*/
+			Platform.runLater(() -> VisualApplication.getApplication().getAccountPanel().load());
+		} else if(mess instanceof Message) {
+			Platform.runLater(() -> {
+				Message m = (Message) mess;
+				if(m.getWith() == null)
+					VisualApplication.getApplication().getGeneralChatPanel().getChatCTRL().printMessage(m);
+				else
+					VisualApplication.getApplication().getPrivateChatPanel().getChatCTRL().printMessage(m);
+			});
+			//rawResult = (Message) mess;
 		} else if(mess instanceof LoginResult) {
 			AccountController.manageConnect((LoginResult) mess);
-			return;
 		} else if(mess instanceof RegisterResult) {
 			AccountController.manageRegister((RegisterResult) mess);
-			return;
-		} else 
-		{
+		} else if(mess instanceof PlayerList) {
+			onlineUsers = ((PlayerList) mess).getAll();
+			Platform.runLater(() -> VisualApplication.getApplication().getAccountPanel().load());
+		} else if(mess.getSender() != Account.SERVER_ACCOUNT){
 			onlineUsers.add(mess.getSender());
 		}
-		final Message result = rawResult;
+		/*final Message result = rawResult;
 		try {
 			if(view != null)
 				Platform.runLater(() -> view.getChatCTRL().printMessage(view.getReceivedText(),result));
 		} catch (Exception e) {
 			
-		}
+		}*/
 	}
 }

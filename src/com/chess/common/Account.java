@@ -1,6 +1,7 @@
 package com.chess.common;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +10,11 @@ import com.chess.server.manager.OldGameManager;
 @SuppressWarnings("serial")
 public class Account implements Serializable {
 	
-	public static final Account SERVER_ACCOUNT = new Account(-1, "Server");
+	public static final Account SERVER_ACCOUNT = new Account(-1, "Server", null);
 	
 	private final long id;
 	private String name;
+	private Timestamp createdAt;
 	private final List<OldGame> oldGames = new ArrayList<>();
 	private boolean isTemp = false;
 
@@ -22,9 +24,10 @@ public class Account implements Serializable {
 	 * @param id the account id
 	 * @param name the account name
 	 */
-	public Account(long id, String name) {
+	public Account(long id, String name, Timestamp createdAt) {
 		this.id = id;
 		this.name = name;
+		this.createdAt = createdAt;
 		load();
 	}
 	
@@ -39,6 +42,7 @@ public class Account implements Serializable {
 		this.id = -1;
 		this.name = "Not logged";
 		this.isTemp = true;
+		this.createdAt = null;
 	}
 	
 	private void load() {
@@ -72,7 +76,26 @@ public class Account implements Serializable {
 		this.name = name;
 	}
 	
+	/**
+	 * Check if it's temporary account
+	 * 
+	 * @return true if it's a temp account
+	 */
 	public boolean isTemp() {
 		return isTemp;
+	}
+	
+	/**
+	 * Know when the account got created.
+	 * 
+	 * @return the created timestamp
+	 */
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+	
+	@Override
+	public String toString() {
+		return "[id=" + id + ",name=" + name + "]";
 	}
 }

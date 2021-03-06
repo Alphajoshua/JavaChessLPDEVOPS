@@ -88,7 +88,7 @@ public class IHM extends Application {
 			@Override
 			public void handle(MouseEvent e) {
 				try {
-					Message mess = new Message(MainClient.getAccount(), textInput.getText());
+					Message mess = new Message(MainClient.getAccount(), textInput.getText(), null);
 					client.getOut().writeObject(mess);
 					client.getOut().flush();
 					textInput.setText("");

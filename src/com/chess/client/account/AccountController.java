@@ -3,7 +3,8 @@ package com.chess.client.account;
 import javax.swing.JOptionPane;
 
 import com.chess.client.MainClient;
-import com.chess.client.chat.ChatIHM;
+import com.chess.client.VisualApplication;
+import com.chess.common.messages.PlayerList;
 import com.chess.common.messages.login.Login;
 import com.chess.common.messages.login.LoginResult;
 import com.chess.common.messages.login.LoginResult.LoginResultType;
@@ -12,7 +13,6 @@ import com.chess.common.messages.login.RegisterResult;
 import com.chess.common.messages.login.RegisterResult.RegisterResultType;
 
 import javafx.application.Platform;
-import javafx.stage.Stage;
 
 public class AccountController {
 	
@@ -30,17 +30,8 @@ public class AccountController {
 		if(type.isSuccess()) {
 			MainClient.setAccount(login.getLoggedAccount());
 			JOptionPane.showMessageDialog(null, type.getMessage());
-			AccountPanel.instance.haveToCloseConnection = false;
-			Platform.exit();
-			Platform.runLater(() -> {
-				try {
-					new ChatIHM().start(new Stage());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
-			//Platform.runLater(() -> ChatIHM.main(new String[0]));
-			//ChatIHM.main(new String[0]);
+			MainClient.getClient().sendMessage(new PlayerList(null));
+			Platform.runLater(() -> VisualApplication.getApplication().updateAll());
 		} else {
 			JOptionPane.showMessageDialog(null, "Aie ... " + type.getMessage());
 		}
@@ -60,9 +51,8 @@ public class AccountController {
 		if(type.isSuccess()) {
 			MainClient.setAccount(register.getRegisteredAccount());
 			JOptionPane.showMessageDialog(null, type.getMessage());
-			AccountPanel.instance.haveToCloseConnection = false;
-			Platform.exit();
-			ChatIHM.main(new String[0]);
+			MainClient.getClient().sendMessage(new PlayerList(null));
+			Platform.runLater(() -> VisualApplication.getApplication().updateAll());
 		} else {
 			JOptionPane.showMessageDialog(null, "Aie ... " + type.getMessage());
 		}

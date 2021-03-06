@@ -1,6 +1,5 @@
 package com.chess.client;
 
-import com.chess.client.account.AccountIHM;
 import com.chess.common.Account;
 
 public class MainClient {
@@ -27,8 +26,9 @@ public class MainClient {
 		{
 			client = new Client(args[0], Integer.parseInt(args[1]));
 			account = new Account();
-			AccountIHM.main(args);
+			//AccountIHM.main(args);
 			//ChatIHM.main(args);
+			VisualApplication.run(args);
 		}
 	}
 

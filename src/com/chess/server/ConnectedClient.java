@@ -6,10 +6,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.chess.common.Account;
+import com.chess.common.messages.PlayerList;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.ServerMessage;
+import com.chess.common.messages.StatusUpdate;
+import com.chess.common.messages.StatusUpdate.StatusType;
 import com.chess.common.messages.login.Login;
 import com.chess.common.messages.login.LoginResult;
 import com.chess.common.messages.login.LoginResult.LoginResultType;
@@ -27,6 +32,7 @@ public class ConnectedClient implements Runnable {
 	private Account account;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
+	private boolean wantToReceiveConnection = false;
 	
 	/**
 	 * Create a new connected client
@@ -62,6 +68,11 @@ public class ConnectedClient implements Runnable {
 		return account;
 	}
 	
+	/**
+	 * Set the new client of the current connection
+	 * 
+	 * @param account the new account
+	 */
 	public void setAccount(Account account) {
 		this.account = account;
 	}
@@ -76,13 +87,12 @@ public class ConnectedClient implements Runnable {
 					return;
 				}
 				SendableMessage m = (SendableMessage) in.readObject();
-				System.out.println("Received message: " + m);
 				if(m == null) {
 					server.disconnectClient(this);
 					return;
 				}
-				if(m.getSender() != null)
-					this.account = m.getSender();
+				/*if(m.getSender() != null && m.getSender() != Account.SERVER_ACCOUNT)
+					this.account = m.getSender();*/
 				if(m instanceof ServerMessage)
 					manageMessage((ServerMessage) m);
 				else
@@ -107,13 +117,12 @@ public class ConnectedClient implements Runnable {
 	}
 	
 	public void manageMessage(ServerMessage srv) {
-		System.out.println("Received server message: " + srv.getClass().getCanonicalName());
 		if(srv instanceof Login) {
 			Login login = (Login) srv;
 			Object obj = AccountManager.getAccount(login.getLogin(), login.getPassword());
 			System.out.println("Login acc: " + obj);
 			if(obj instanceof Account) {
-				account = (Account) obj;
+				setAccount((Account) obj);
 				sendMessage(new LoginResult(LoginResultType.LOGIN_SUCCESS, account));
 			} else if(obj instanceof LoginResultType) {
 				sendMessage(new LoginResult((LoginResultType) obj, null));
@@ -125,8 +134,14 @@ public class ConnectedClient implements Runnable {
 			Account account = AccountManager.createNewAccount(register.getLogin(), register.getPassword());
 			if(account == null)
 				sendMessage(new RegisterResult(RegisterResultType.INTERNAL_ERROR, null));
-			else
+			else {
+				setAccount(account);
 				sendMessage(new RegisterResult(RegisterResultType.REGISTER_SUCCESS, account));
+			}
+		} else if(srv instanceof PlayerList) {
+			server.broadcastMessage(new StatusUpdate(StatusType.LOGIN, getAccount()));
+			wantToReceiveConnection = true;
+			sendMessage(new PlayerList(server.getClients().stream().map(ConnectedClient::getAccount).filter(Objects::nonNull).collect(Collectors.toList())));
 		} else {
 			System.out.println("Unknow server packet " + srv.getClass().getCanonicalName() + " from " + srv.getSender());
 		}
@@ -139,6 +154,14 @@ public class ConnectedClient implements Runnable {
 	 */
 	public int getId() {
 		return id;
+	}
+	
+	public boolean isWantToReceiveConnection() {
+		return wantToReceiveConnection;
+	}
+	
+	public boolean canBeShowned() {
+		return account != null && !account.isTemp();
 	}
 	
 	/**

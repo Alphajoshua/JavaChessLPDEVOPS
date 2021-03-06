@@ -12,24 +12,23 @@ public class AccountIHM extends Application {
 
 	public static final int WARP_LENGHT = 220;
 
-	private static final Color BACKGROUND_COLOR = Color.rgb(76,119,153,1.0);
-	
+	private static final Color BACKGROUND_COLOR = Color.rgb(76, 119, 153, 1.0);
+
 	private float width = 400;
 	private float height = 500;
-	private AccountPanel panel;
 
 	@Override
 	public void start(Stage primaryStage) {
 
 		primaryStage.setMinHeight(height);
 		primaryStage.setMinWidth(width);
-		GridPane chatGroup = new GridPane(); 
-		
-		chatGroup.getChildren().add(panel = new AccountPanel(width));
-		
+		GridPane chatGroup = new GridPane();
+
+		// chatGroup.getChildren().add(panel = new AccountPanel(width));
+
 		Scene chatScene = new Scene(chatGroup, width, height);
 		chatScene.setFill(BACKGROUND_COLOR);
-		
+
 		primaryStage.setTitle("Mon compte");
 		primaryStage.setScene(chatScene);
 		primaryStage.show();
@@ -37,12 +36,10 @@ public class AccountIHM extends Application {
 
 	@Override
 	public void stop() throws Exception {
-		if(panel.haveToCloseConnection) {
-			client.disconnectServer();
-			System.exit(0);
-		}
+		client.disconnectServer();
+		System.exit(0);
 	}
-	
+
 	public static void main(String[] args) {
 		Application.launch(AccountIHM.class, args);
 	}

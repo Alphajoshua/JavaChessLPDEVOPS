@@ -6,15 +6,8 @@ import com.chess.common.Account;
 public class Message extends SendableMessage {
 		
 	private String message;
+	private Account with;
 	
-	/**
-	 * Create a new empty message
-	 * 
-	 */
-	public Message()
-	{
-		message = "";
-	}
 	/**
 	 * Create a new message by copy
 	 * 
@@ -31,9 +24,10 @@ public class Message extends SendableMessage {
 	 * @param sender the sender account
 	 * @param sender the name of sender
 	 */
-	public Message(Account sender, String message) {
+	public Message(Account sender, String message, Account with) {
 		super(sender);
 		this.message = message;
+		this.with = with;
 	}
 	
 	/**
@@ -54,19 +48,18 @@ public class Message extends SendableMessage {
 		this.message = message;
 	}
 	
+	/**
+	 * Get the account with the sender interact with
+	 * It can be null if the message is a general one
+	 * 
+	 * @return the with account
+	 */
+	public Account getWith() {
+		return with;
+	}
+		
 	@Override
 	public String toShow() {
-		String result = "";
-		/*if(TODO.getLastSender() == name)
-		{
-			for(int i =0; i< name.length()+2;++i)
-			{
-				result +=" ";
-			}
-			result+= message;
-		}
-		else*/
-			result = getSender().getName() + ": " + message;
-		return result;
+		return getSender().getName() + ": " + message;
 	}
 }
