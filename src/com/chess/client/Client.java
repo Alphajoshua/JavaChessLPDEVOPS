@@ -134,6 +134,8 @@ public class Client {
 		} else if(mess instanceof Message) {
 			Platform.runLater(() -> {
 				Message m = (Message) mess;
+				if(m.getSender() == MainClient.getAccount())
+					return;
 				if(m.getWith() == null)
 					VisualApplication.getApplication().getGeneralChatPanel().getChatCTRL().printMessage(m);
 				else

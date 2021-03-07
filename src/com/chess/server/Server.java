@@ -55,9 +55,12 @@ public class Server {
 	public void broadcastMessage(SendableMessage m) {
 		clients.stream().filter((cc) -> m.getSender() != null && cc.getId() != m.getSender().getId()).forEach((cc) -> {
 			if(m instanceof Message) {
-				Message msg = (Message) m;
-				if(msg.getWith() == null || (msg.getWith() == cc.getAccount() || msg.getSender() == cc.getAccount()))
+				cc.sendMessage(m);
+				/*Message msg = (Message) m;
+				if(msg.getWith() == null || (msg.getWith().equals(cc.getAccount())))
 					cc.sendMessage(m);
+				else
+					System.out.println("Escaping message " + msg.toString() + " for " + cc.getAccount().toString());*/
 			} else
 				cc.sendMessage(m);
 		});

@@ -22,7 +22,8 @@ public class Message extends SendableMessage {
 	 * Create a new message
 	 * 
 	 * @param sender the sender account
-	 * @param sender the name of sender
+	 * @param message the message
+	 * @param with the player concerned by the message
 	 */
 	public Message(Account sender, String message, Account with) {
 		super(sender);
@@ -61,5 +62,10 @@ public class Message extends SendableMessage {
 	@Override
 	public String toShow() {
 		return getSender().getName() + ": " + message;
+	}
+	
+	@Override
+	public String toString() {
+		return "[sender=" + getSender() + ",message=" + message + ",with=" + with + "]";
 	}
 }

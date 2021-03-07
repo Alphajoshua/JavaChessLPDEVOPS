@@ -51,7 +51,7 @@ public class VisualApplication extends Application {
 		
 		Scene scene = new Scene(pane, app.getWidth() * 3, app.getHeight());
 		scene.setFill(VisualApplication.BACKGROUND_COLOR);
-		primaryStage.setTitle("Connexion");
+		primaryStage.setTitle("Chess");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
