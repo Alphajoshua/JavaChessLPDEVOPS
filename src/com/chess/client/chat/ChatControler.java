@@ -36,12 +36,13 @@ public class ChatControler {
 				System.out.println("Not same account: " + message.getWith() + " / " + MainClient.getAccount());
 				return;
 			}
-			if(panel.getWith() != null || !panel.getWith().equals(message.getSender())) {
+			if(panel.getWith() == null || !panel.getWith().equals(message.getSender())) {
 				panel.setWith(message.getSender());
 				panel.receivedText.getChildren().clear();
 			}
 		}
 		Platform.runLater(() -> {
+			System.out.println("Showing message " + message.toString());
 			Label text = new Label(message.toShow()+"\n");
 			text.setWrapText(true);
 			text.prefWidthProperty().bind(panel.receivedText.prefWidthProperty());

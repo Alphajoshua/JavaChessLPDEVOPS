@@ -107,8 +107,15 @@ public class ChatPanel extends Parent {
 	public void updateDisplay()
 	{
 		//Set position for each element
+		
+		chatTypeInformation.setText(type.getName().replaceAll("%name%", with == null ? "Personne" : with.getName()));
+		chatTypeInformation.setLayoutX(padding);
+		chatTypeInformation.setLayoutY(0);
+		chatTypeInformation.setPrefWidth(width);
+		chatTypeInformation.setMinHeight(15);
+		
 		scrollReceivedText.setLayoutX(padding);
-		scrollReceivedText.setLayoutY(padding);
+		scrollReceivedText.setLayoutY(padding + 15);
 		scrollReceivedText.setPrefWidth(width-2*padding);
 		scrollReceivedText.setPrefHeight(height/6*5);
 		
@@ -140,12 +147,6 @@ public class ChatPanel extends Parent {
 		clearBtn.setVisible(true);
 		clearBtn.setText("Clear");
 		clearBtn.setOnAction((e) -> chatCTRL.clearMessage(textToSend));
-		
-		chatTypeInformation.setText(type.getName().replaceAll("%name%", with == null ? "Personne" : with.getName()));
-		chatTypeInformation.setLayoutX(padding);
-		chatTypeInformation.setLayoutY(0);
-		chatTypeInformation.setPrefWidth((width-(2*padding))/5*4);
-		chatTypeInformation.setPrefHeight(height-textToSend.getLayoutY()-padding);
 	}
 	
 	public Account getWith() {
