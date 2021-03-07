@@ -1,78 +1,46 @@
 package com.chess.client.account;
 
-import com.chess.client.MainClient;
-import com.chess.common.Account;
+import static com.chess.client.MainClient.client;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class AccountIHM extends Application {
 
 	public static final int WARP_LENGHT = 220;
 
+	private static final Color BACKGROUND_COLOR = Color.rgb(76, 119, 153, 1.0);
+
+	private float width = 400;
+	private float height = 500;
 
 	@Override
 	public void start(Stage primaryStage) {
+
+		primaryStage.setMinHeight(height);
+		primaryStage.setMinWidth(width);
+		GridPane chatGroup = new GridPane();
+
+		// chatGroup.getChildren().add(panel = new AccountPanel(width));
+
+		Scene chatScene = new Scene(chatGroup, width, height);
+		chatScene.setFill(BACKGROUND_COLOR);
+
 		primaryStage.setTitle("Mon compte");
-
-		FlowPane contextPane = new FlowPane();
-		contextPane.setPadding(new Insets(5, 5, 0, 0));
-		contextPane.setVgap(4);
-		contextPane.setHgap(4);
-		contextPane.setPrefWrapLength(170); // preferred width allows for two columns
-		contextPane.setStyle("-fx-background-color: DAE6F3;");
-		contextPane.setAlignment(Pos.BASELINE_CENTER);
-		
-		Account acc = MainClient.getAccount();
-		if(acc == null) {
-			// login page
-			TextField userNameInput = new TextField("Nom d'utilisateur");
-			userNameInput.setPrefWidth(170);
-			
-			TextField passwordInput = new TextField("Mot de passe");
-			passwordInput.setPrefWidth(170);
-			
-			Button loginButton = new Button("Se connecter");
-			loginButton.setOnMouseClicked(new EventHandler<MouseEvent>() { 
-				@Override
-				public void handle(MouseEvent e) {
-					try {
-						
-					} catch (Exception exc) {
-						exc.printStackTrace();
-					}
-				}
-			});
-			
-			contextPane.getChildren().addAll(userNameInput, passwordInput, loginButton);
-		} else {
-			// account infos
-			
-		}
-
-		GridPane grid = new GridPane();
-
-		grid.add(contextPane, 1, 0);
-
-		BorderPane rootLayout = new BorderPane(grid);
-		rootLayout.setPrefSize(800, 800);
-		Scene scene = new Scene(rootLayout);
-		primaryStage.setScene(scene);
+		primaryStage.setScene(chatScene);
 		primaryStage.show();
 	}
 
-	public static void run(String[] args) {
-		launch(args);
+	@Override
+	public void stop() throws Exception {
+		client.disconnectServer();
+		System.exit(0);
 	}
 
+	public static void main(String[] args) {
+		Application.launch(AccountIHM.class, args);
+	}
 }

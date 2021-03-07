@@ -2,9 +2,8 @@ package com.chess.common.messages;
 
 import com.chess.common.Account;
 
+@SuppressWarnings("serial")
 public class StatusUpdate extends SendableMessage {
-
-	private static final long serialVersionUID = 656145611L;
 	
 	private final StatusType type;
 	
@@ -46,6 +45,7 @@ public class StatusUpdate extends SendableMessage {
 		LOGIN("connecté"),
 		LOGOUT("déconnecté");
 		
+		private static final long serialVersionUID = 0;
 		private final String name;
 		
 		private StatusType(String name) {

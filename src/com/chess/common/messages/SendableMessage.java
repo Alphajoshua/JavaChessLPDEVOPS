@@ -9,9 +9,8 @@ import com.chess.common.Account;
  * 
  * @author Elikill58
  */
+@SuppressWarnings("serial")
 public abstract class SendableMessage implements Serializable {
-
-	private static final long serialVersionUID = 656145611L;
 	
 	private Account account;
 	

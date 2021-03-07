@@ -9,7 +9,6 @@ public class Database {
 	
 	private static String url, user, password;
 	private static Connection connection;
-	private static long lastValidityCheck = 0;
 	
 	public static Connection getConnection() throws SQLException {
 		if(!isValidConnection()) {
@@ -36,25 +35,18 @@ public class Database {
 		state.executeUpdate("CREATE TABLE IF NOT EXISTS accounts ("
 				+ "id INT(11) PRIMARY KEY AUTO_INCREMENT,"
 				+ "name VARCHAR(16),"
-				+ "password LONGTEXT);");
+				+ "password LONGTEXT,"
+				+ "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);");
 		state.executeUpdate("CREATE TABLE IF NOT EXISTS old_games ("
 				+ " id INT(11) PRIMARY KEY AUTO_INCREMENT,"
 				+ " user_black INT(11),"
 				+ " user_white INT(11),"
-				+ " winner INT(11),"
+				+ " winner INT(11)"
 				+ ");");
 		
 	}
 	
 	private static boolean isValidConnection() throws SQLException {
-		if(connection == null || connection.isClosed())
-			return false;
-		long now = System.currentTimeMillis();
-		// The connection may die if not used for some time, here we check each 15 minutes
-		if (now - lastValidityCheck > 900_000) {
-			lastValidityCheck = now;
-			return connection.isValid(1);
-		}
-		return true;
+		return connection != null && !connection.isClosed();
 	}
 }

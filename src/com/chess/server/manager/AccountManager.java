@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 import com.chess.common.Account;
+import com.chess.common.messages.login.LoginResult.LoginResultType;
+import com.chess.common.security.SHA256;
 import com.chess.server.Database;
 
 public class AccountManager {
@@ -44,13 +47,40 @@ public class AccountManager {
 				select.setLong(1, id);
 				ResultSet rs = select.executeQuery();
 				if(rs.next()) {
-					return new Account(id, rs.getString("name"));
+					return getAccount(rs);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			return null;
 		});
+	}
+	
+	/**
+	 * Get or create a user account by it's name
+	 * 
+	 * @param name the user name
+	 * @return an account or null if cannot create account
+	 */
+	public static Object getAccount(String name, String passwd) {
+		try {
+			Connection co = Database.getConnection();
+			PreparedStatement select = co.prepareStatement("SELECT * FROM accounts WHERE name = ?");
+			select.setString(1, name);
+			ResultSet rs = select.executeQuery();
+			if(rs.next()) {
+				if(SHA256.comparePassword(rs.getString("password"), passwd))
+					return getAccount(rs);
+				return LoginResultType.WRONG_PASSWORD;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return LoginResultType.UNKNOW_ACCOUNT;
+	}
+	
+	private static Account getAccount(ResultSet rs) throws SQLException {
+		return new Account(rs.getLong("id"), rs.getString("name"), rs.getTimestamp("created_at"));
 	}
 	
 	/**
@@ -68,7 +98,7 @@ public class AccountManager {
 			if(rs.next()) {
 				return getAccount(rs.getLong("id"));
 			} else {
-				return createNewAccount(name);
+				return createNewAccount(name, "");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -76,17 +106,18 @@ public class AccountManager {
 		return null;
 	}
 	
-	public static Account createNewAccount(String name) {
+	public static Account createNewAccount(String name, String password) {
 		try {
 			Connection co = Database.getConnection();
-			PreparedStatement insertStm = co.prepareStatement("INSERT INTO accounts(name) VALUES (?);", new String[] {"id"});
+			PreparedStatement insertStm = co.prepareStatement("INSERT INTO accounts(name, password) VALUES (?, ?);", new String[] {"id"});
 			insertStm.setString(1, name);
+			insertStm.setString(2, password);
 			int affectedRows = insertStm.executeUpdate();
 
 			if (affectedRows > 0) {
 				ResultSet rs = insertStm.getGeneratedKeys();
 			    if (rs.next())
-					return new Account(rs.getLong(1), name);
+					return new Account(rs.getLong(1), name, new Timestamp(System.currentTimeMillis()));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

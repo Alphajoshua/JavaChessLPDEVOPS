@@ -1,9 +1,10 @@
 package com.chess.client.chat;
 
-import javafx.application.Application;
-
 import static com.chess.client.MainClient.client;
 
+import com.chess.client.chat.ChatPanel.ChatType;
+
+import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -25,8 +26,8 @@ public class ChatIHM extends Application {
 		chatStage.setMinHeight(500);
 		chatStage.setMinWidth(400);
 
-		ChatPanel chatPanel = new ChatPanel(width,height);
-		client.setView(chatPanel);
+		ChatPanel chatPanel = new ChatPanel(null, ChatType.GENERAL);//width,height);
+		//client.setView(chatPanel);
 		
 		Group chatGroup = new Group(); 
 		

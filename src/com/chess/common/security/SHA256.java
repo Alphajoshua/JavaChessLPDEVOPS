@@ -6,13 +6,20 @@ import java.security.NoSuchAlgorithmException;
 
 public class SHA256 {
 
-	public static String hash(String password, String salt, String name) throws NoSuchAlgorithmException {
-		return "$SHA$" + salt + "$" + getSHA256(String.valueOf(getSHA256(password)) + salt);
+	public static String hash(String password, String salt) {
+		try {
+			return "$SHA$" + salt + "$" + getSHA256(String.valueOf(getSHA256(password)) + salt);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public static boolean comparePassword(String hash, String password) throws NoSuchAlgorithmException {
+	public static boolean comparePassword(String hash, String password) {
+		if(password.startsWith("$SHA$"))
+			return hash.equals(password);
 		String[] line = hash.split("\\$");
-		return hash.equals(hash(password, line[2], ""));
+		return hash.equals(hash(password, line[2]));
 	}
 
 	private static String getSHA256(String message) throws NoSuchAlgorithmException {

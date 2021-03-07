@@ -19,6 +19,10 @@ public class Connection implements Runnable {
 		try {
 			this.serverSocket = new ServerSocket(server.getPort());
 		} catch (IOException e) {
+			System.err.println("Failed to load socket on port " + server.getPort() + ". Maybe already in use ?");
+			e.printStackTrace();
+			System.exit(0);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

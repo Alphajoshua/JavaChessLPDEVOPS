@@ -2,15 +2,20 @@ package com.chess.client.chat;
 
 import static com.chess.client.MainClient.client;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import com.chess.client.MainClient;
+import com.chess.client.VisualApplication;
+import com.chess.common.Account;
+
+import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.TextFlow;
 
-public class ChatPanel extends Parent{
+public class ChatPanel extends Parent {
 
 	ChatControler chatCTRL;
 	int padding = 5;
@@ -25,8 +30,13 @@ public class ChatPanel extends Parent{
 	Button sendBtn;
 	Button clearBtn;
 	
+	Label chatTypeInformation;
+	
 	float width;
 	float height;
+	
+	ChatType type;
+	Account with;
 	
 	public ChatControler getChatCTRL()
 	{
@@ -38,43 +48,59 @@ public class ChatPanel extends Parent{
 		return this.receivedText;
 	}
 	
-	public ChatPanel (float widthAvailable, float heightAvailable)
+	public ChatPanel (VisualApplication app, ChatType type)
 	{
-		chatCTRL = new ChatControler();
+		this.chatCTRL = new ChatControler(this);
 		
-		width=widthAvailable;
-		height=heightAvailable;
+		this.width = app.getWidth();
+		this.height = app.getHeight();
 		//Init each elements
-		textToSend = new TextArea();
-		scrollReceivedText = new ScrollPane();
-		receivedText = new TextFlow();
-		sendBtn = new Button();
-		clearBtn = new Button();
+		this.textToSend = new TextArea();
+		this.scrollReceivedText = new ScrollPane();
+		this.receivedText = new TextFlow();
+		this.sendBtn = new Button();
+		this.clearBtn = new Button();
+		this.chatTypeInformation = new Label();
+		
+		this.type = type;
+		
+		update();
+	}
+	
+	public void update() {
+		this.getChildren().clear();
+		
+		if(MainClient.getAccount() == null || MainClient.getAccount().isTemp()) {
+			Label l = new Label("Vous devez être connecté pour parler !");
+	        l.setPrefWidth(width);
+	        l.setPrefHeight(height);
+	        l.setWrapText(true);
+	        l.setAlignment(Pos.BASELINE_CENTER);
+			this.getChildren().add(l);
+			return;
+		}
 		
 		updateDisplay();
 
-		
-		
-		
 		//Add each element to the object
-		this.getChildren().add(textToSend);
-		this.getChildren().add(scrollReceivedText);
-		this.getChildren().add(sendBtn);
-		this.getChildren().add(clearBtn);
-		
-		
-		
+		if(!(type.equals(ChatType.PRIVATE_MESSAGE) && with == null)) {
+			this.getChildren().add(textToSend);
+			this.getChildren().add(scrollReceivedText);
+			this.getChildren().add(sendBtn);
+			this.getChildren().add(clearBtn);
+		}
+		this.getChildren().add(chatTypeInformation);
 	}
 	
 	public void updateHeight(Number newVal)
 	{
-		this.height= newVal.floatValue();
+		this.height = newVal.floatValue();
 		updateDisplay();
 	}
 	
 	public void updateWidth(Number newVal)
 	{
-		this.width=newVal.floatValue();
+		this.width = newVal.floatValue();
 		updateDisplay();
 	}
 	
@@ -104,14 +130,7 @@ public class ChatPanel extends Parent{
 		sendBtn.setPrefHeight( (textToSend.getPrefHeight()-padding)/2 );
 		sendBtn.setVisible(true);
 		sendBtn.setText("Send");
-		sendBtn.setOnAction(new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent event)
-					{
-						chatCTRL.sendAndDisplayMessage(textToSend,receivedText,client);
-					}
-				});
+		sendBtn.setOnAction((e) -> chatCTRL.sendAndDisplayMessage(textToSend, client, with));
 		
 		
 		clearBtn.setLayoutX(textToSend.getPrefWidth()+(2*padding) );
@@ -120,13 +139,35 @@ public class ChatPanel extends Parent{
 		clearBtn.setPrefHeight((textToSend.getPrefHeight()-padding)/2);
 		clearBtn.setVisible(true);
 		clearBtn.setText("Clear");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				chatCTRL.clearMessage(textToSend);
-			}
-		});
+		clearBtn.setOnAction((e) -> chatCTRL.clearMessage(textToSend));
+		
+		chatTypeInformation.setText(type.getName().replaceAll("%name%", with == null ? "Personne" : with.getName()));
+		chatTypeInformation.setLayoutX(padding);
+		chatTypeInformation.setLayoutY(0);
+		chatTypeInformation.setPrefWidth((width-(2*padding))/5*4);
+		chatTypeInformation.setPrefHeight(height-textToSend.getLayoutY()-padding);
+	}
+	
+	public Account getWith() {
+		return with;
+	}
+	
+	public void setWith(Account with) {
+		this.with = with;
+		Platform.runLater(this::update);
+	}
+	
+	public static enum ChatType {
+		GENERAL("Général"), PRIVATE_MESSAGE("Message privée avec %name%");
+		
+		private final String name;
+		
+		private ChatType(String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return name;
+		}
 	}
 }

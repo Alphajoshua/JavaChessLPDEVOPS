@@ -3,6 +3,7 @@ package com.chess.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chess.common.messages.Message;
 import com.chess.common.messages.SendableMessage;
 import com.chess.common.messages.StatusUpdate;
 import com.chess.common.messages.StatusUpdate.StatusType;
@@ -31,7 +32,6 @@ public class Server {
 	 */
 	public void addClient(ConnectedClient client) {
 		clients.add(client);
-		broadcastMessage(new StatusUpdate(StatusType.LOGIN, client.getAccount()));
 	}
 	
 	/**
@@ -53,10 +53,16 @@ public class Server {
 	 * @param from the sender of the message
 	 */
 	public void broadcastMessage(SendableMessage m) {
-		clients.forEach((cc) -> {
-			if(m.getSender() != null && cc.getId() != m.getSender().getId()) {
+		clients.stream().filter((cc) -> m.getSender() != null && cc.getId() != m.getSender().getId()).forEach((cc) -> {
+			if(m instanceof Message) {
 				cc.sendMessage(m);
-			}
+				/*Message msg = (Message) m;
+				if(msg.getWith() == null || (msg.getWith().equals(cc.getAccount())))
+					cc.sendMessage(m);
+				else
+					System.out.println("Escaping message " + msg.toString() + " for " + cc.getAccount().toString());*/
+			} else
+				cc.sendMessage(m);
 		});
 	}
 	

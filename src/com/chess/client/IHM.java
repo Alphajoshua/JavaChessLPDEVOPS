@@ -1,5 +1,7 @@
 package com.chess.client;
 
+import static com.chess.client.MainClient.client;
+
 import com.chess.common.messages.Message;
 
 import javafx.application.Application;
@@ -21,7 +23,6 @@ import javafx.stage.Stage;
 public class IHM extends Application {
 
 	public static final int WARP_LENGHT = 220;
-	private static Client client;
 	public static FlowPane messagesPane, onlineUsers;
 	
 	private Stage primaryStage;
@@ -42,7 +43,6 @@ public class IHM extends Application {
 	
 	@Override
 	public void stop() throws Exception {
-		client.disconnectServer();
 		System.exit(0);
 	}
 
@@ -88,7 +88,7 @@ public class IHM extends Application {
 			@Override
 			public void handle(MouseEvent e) {
 				try {
-					Message mess = new Message(MainClient.getAccount(), textInput.getText());
+					Message mess = new Message(MainClient.getAccount(), textInput.getText(), null);
 					client.getOut().writeObject(mess);
 					client.getOut().flush();
 					textInput.setText("");
@@ -151,8 +151,7 @@ public class IHM extends Application {
 		return primaryStage;
 	}
 
-	public static void run(Client client, String[] args) {
-		IHM.client = client;
+	public static void run(String[] args) {
 		launch(args);
 	}
 
