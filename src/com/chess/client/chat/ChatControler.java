@@ -36,7 +36,7 @@ public class ChatControler {
 				System.out.println("Not same account: " + message.getWith() + " / " + MainClient.getAccount());
 				return;
 			}
-			if(!panel.getWith().equals(message.getSender())) {
+			if(panel.getWith() != null || !panel.getWith().equals(message.getSender())) {
 				panel.setWith(message.getSender());
 				panel.receivedText.getChildren().clear();
 			}
